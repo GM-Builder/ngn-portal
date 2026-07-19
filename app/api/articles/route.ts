@@ -162,6 +162,6 @@ export async function POST(req: NextRequest) {
     id: result.id,
     slug: result.slug,
     status: status,
-    url: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/article/${result.id}/${result.slug}`,
+    url: `${process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000")}/article/${result.id}/${result.slug}`,
   });
 }
