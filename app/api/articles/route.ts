@@ -74,7 +74,7 @@ async function trySupabasePublish(body: any) {
     is_featured,
     is_breaking,
     reading_time_minutes: estimateReadTime(content),
-    published_at: status === "published" ? new Date().toISOString() : null,
+    published_at: new Date().toISOString(),
   };
 
   const { data, error } = await supabase.from("articles").insert(article).select().single();
