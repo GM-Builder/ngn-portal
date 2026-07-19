@@ -1,0 +1,200 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #111111;
+  --card: #ffffff;
+  --card-foreground: #111111;
+  --popover: #ffffff;
+  --popover-foreground: #111111;
+  --primary: #1B2A72;
+  --primary-foreground: #ffffff;
+  --secondary: #F2F4F7;
+  --secondary-foreground: #1B2A72;
+  --muted: #F8FAFC;
+  --muted-foreground: #475569;
+  --accent: #E53935;
+  --accent-foreground: #ffffff;
+  --destructive: #EF4444;
+  --destructive-foreground: #ffffff;
+  --border: #E2E8F0;
+  --input: #E2E8F0;
+  --ring: #1B2A72;
+  --radius: 0px; /* Brand guideline specifies bold, block-like style with sharp corners */
+}
+
+.dark {
+  --background: #090D1F;
+  --foreground: #F8FAFC;
+  --card: #0E1330;
+  --card-foreground: #F8FAFC;
+  --popover: #0E1330;
+  --popover-foreground: #F8FAFC;
+  --primary: #38BDF8;
+  --primary-foreground: #090D1F;
+  --secondary: #1E293B;
+  --secondary-foreground: #F8FAFC;
+  --muted: #0F172A;
+  --muted-foreground: #94A3B8;
+  --accent: #F43F5E;
+  --accent-foreground: #ffffff;
+  --destructive: #EF4444;
+  --destructive-foreground: #ffffff;
+  --border: #1E293B;
+  --input: #1E293B;
+  --ring: #38BDF8;
+}
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --font-heading: var(--font-space-grotesk);
+  --font-sans: var(--font-urbanist);
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+}
+
+@layer base {
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
+
+/* Tiptap rich text editor styling & Public reader styling */
+.ProseMirror {
+  min-height: 400px;
+  outline: none;
+  padding: 1.5rem;
+}
+
+.ProseMirror p,
+.rich-text p {
+  margin-bottom: 1.25rem;
+  line-height: 1.8;
+  font-size: 1.1rem;
+}
+
+.ProseMirror h1,
+.rich-text h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  font-family: var(--font-space-grotesk);
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.ProseMirror h2,
+.rich-text h2 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  font-family: var(--font-space-grotesk);
+  margin-top: 1.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.ProseMirror h3,
+.rich-text h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  font-family: var(--font-space-grotesk);
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.ProseMirror ul,
+.rich-text ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.ProseMirror ol,
+.rich-text ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.ProseMirror blockquote,
+.rich-text blockquote {
+  border-left: 4px solid var(--accent);
+  padding-left: 1.25rem;
+  font-style: italic;
+  margin: 1.75rem 0;
+  color: var(--muted-foreground);
+}
+
+.ProseMirror table,
+.rich-text table {
+  border-collapse: collapse;
+  margin: 1.75rem 0;
+  width: 100%;
+}
+
+.ProseMirror th,
+.rich-text th,
+.ProseMirror td,
+.rich-text td {
+  border: 1px solid var(--border);
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+
+.ProseMirror th,
+.rich-text th {
+  background-color: var(--secondary);
+  font-weight: bold;
+}
+
+.ProseMirror img,
+.rich-text img {
+  max-width: 100%;
+  height: auto;
+  margin: 2rem auto;
+  display: block;
+}
+
+.ProseMirror mark,
+.rich-text mark {
+  background-color: #fef08a;
+  padding: 0.125rem 0.25rem;
+}
+
