@@ -1,30 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
-import fs from "fs";
-import path from "path";
-
-const DATA_FILE = path.join(process.cwd(), ".local-articles.json");
-
-const LOCAL_CATEGORIES: Record<string, { id: number; name: string }> = {
-  politik: { id: 1, name: "Politik" },
-  bisnis: { id: 2, name: "Bisnis" },
-  teknologi: { id: 3, name: "Teknologi" },
-  hiburan: { id: 4, name: "Hiburan" },
-  olahraga: { id: 5, name: "Olahraga" },
-};
-
-function readLocalArticles(): any[] {
-  try {
-    if (fs.existsSync(DATA_FILE)) {
-      return JSON.parse(fs.readFileSync(DATA_FILE, "utf-8"));
-    }
-  } catch {}
-  return [];
-}
-
-function writeLocalArticles(articles: any[]) {
-  fs.writeFileSync(DATA_FILE, JSON.stringify(articles, null, 2), "utf-8");
-}
+import { isSupabaseConfigured } from "@/lib/queries/mockData";
 
 function slugify(title: string) {
   return title
@@ -83,43 +59,6 @@ async function trySupabasePublish(body: any) {
   return data;
 }
 
-function localPublish(body: any) {
-  const { title, content, excerpt, category_slug, author, image_url, is_featured, is_breaking, status } = body;
-
-  const category = LOCAL_CATEGORIES[category_slug];
-  if (!category) {
-    throw new Error(`Kategori '${category_slug}' tidak ditemukan. Gunakan: ${Object.keys(LOCAL_CATEGORIES).join(", ")}`);
-  }
-
-  const slug = slugify(title);
-  const articles = readLocalArticles();
-  if (articles.find((a) => a.slug === slug)) {
-    throw new Error(`Slug '${slug}' sudah dipakai artikel lain`);
-  }
-
-  const newId = articles.length > 0 ? Math.max(...articles.map((a) => a.id)) + 1 : 11;
-  const article = {
-    id: newId,
-    title,
-    slug,
-    content,
-    excerpt: excerpt ?? content.replace(/<[^>]*>/g, "").slice(0, 160),
-    image_url: image_url ?? null,
-    category_id: category.id,
-    author,
-    is_featured,
-    is_breaking,
-    reading_time_minutes: estimateReadTime(content),
-    published_at: new Date().toISOString(),
-    view_count: 0,
-    created_at: new Date().toISOString(),
-  };
-
-  articles.push(article);
-  writeLocalArticles(articles);
-  return article;
-}
-
 export async function POST(req: NextRequest) {
   const authHeader = req.headers.get("authorization") || "";
   const expected = `Bearer ${process.env.HERMES_PUBLISH_KEY}`;
@@ -145,16 +84,18 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  if (!isSupabaseConfigured() || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    return NextResponse.json(
+      { error: "Supabase belum dikonfigurasi. Set NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, dan SUPABASE_SERVICE_ROLE_KEY di Vercel Environment Variables." },
+      { status: 500 }
+    );
+  }
+
   let result;
   try {
     result = await trySupabasePublish(body);
   } catch (err: any) {
-    console.warn("Supabase publish gagal, fallback ke local storage:", err.message);
-    try {
-      result = localPublish(body);
-    } catch (err2: any) {
-      return NextResponse.json({ error: err2.message }, { status: 400 });
-    }
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 
   return NextResponse.json({
