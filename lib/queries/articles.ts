@@ -228,6 +228,62 @@ export async function getArticle(id: number): Promise<Article | null> {
   }
 }
 
+export async function getTopArticlesByCategory(): Promise<Map<string, Article>> {
+  const result = new Map<string, Article>();
+
+  if (!isSupabaseConfigured()) {
+    for (const cat of MOCK_CATEGORIES) {
+      const top = MOCK_ARTICLES
+        .filter(a => a.category_id === cat.id)
+        .sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime())[0];
+      if (top) result.set(cat.slug, top);
+    }
+    return result;
+  }
+
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('articles')
+      .select('*, categories!inner(name, slug)')
+      .order('published_at', { ascending: false });
+
+    if (error) {
+      console.warn('Error fetching top articles by category:', error.message || error);
+      return result;
+    }
+
+    const seen = new Set<number>();
+    for (const art of (data || [])) {
+      const slug = art.categories?.slug;
+      if (slug && !seen.has(art.category_id)) {
+        seen.add(art.category_id);
+        result.set(slug, {
+          id: art.id,
+          title: art.title,
+          slug: art.slug,
+          excerpt: art.excerpt,
+          content: art.content,
+          image_url: art.image_url,
+          category_id: art.category_id,
+          author: art.author,
+          published_at: art.published_at,
+          view_count: art.view_count,
+          is_featured: art.is_featured,
+          is_breaking: art.is_breaking,
+          reading_time_minutes: art.reading_time_minutes,
+          created_at: art.created_at,
+          category_name: art.categories?.name || 'Uncategorized',
+        });
+      }
+    }
+    return result;
+  } catch (err: any) {
+    console.warn('Error fetching top articles by category:', err.message || err);
+    return result;
+  }
+}
+
 export async function getRelatedArticles(id: number): Promise<Article[]> {
   if (!isSupabaseConfigured()) {
     const article = MOCK_ARTICLES.find(art => art.id === id);
