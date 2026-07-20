@@ -4,6 +4,59 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+// ─── Monetag Ad Scripts (Global - load once per page) ────────────────────────
+const MONETAG_INPAGE_PUSH = `https://nap5k.com/tag.min.js`;
+const MONETAG_VIGNETTE = `https://n6wxm.com/vignette.min.js`;
+const MONETAG_DIRECT_LINK = `https://omg10.com/4/11353104`;
+
+// ─── Monetag In-Page Push (Banner) ───────────────────────────────────────────
+export function MonetagInPagePush() {
+  const loaded = useRef(false);
+
+  useEffect(() => {
+    if (loaded.current) return;
+    loaded.current = true;
+
+    const script = document.createElement('script');
+    script.dataset.zone = '11353078';
+    script.src = MONETAG_INPAGE_PUSH;
+    document.body.appendChild(script);
+  }, []);
+
+  return null;
+}
+
+// ─── Monetag Vignette ────────────────────────────────────────────────────────
+export function MonetagVignette() {
+  const loaded = useRef(false);
+
+  useEffect(() => {
+    if (loaded.current) return;
+    loaded.current = true;
+
+    const script = document.createElement('script');
+    script.dataset.zone = '11353090';
+    script.src = MONETAG_VIGNETTE;
+    document.body.appendChild(script);
+  }, []);
+
+  return null;
+}
+
+// ─── Monetag Direct Link Button ──────────────────────────────────────────────
+export function MonetagDirectLink({ children, className }: { children: React.ReactNode; className?: string }) {
+  return (
+    <a
+      href={MONETAG_DIRECT_LINK}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={cn('inline-block', className)}
+    >
+      {children}
+    </a>
+  );
+}
+
 // ─── Adsterra Ad Codes ──────────────────────────────────────────────────────
 const ADSTERRA_SCRIPTS: Record<string, string> = {
   leaderboard: `
