@@ -13,6 +13,36 @@ const nextConfig: NextConfig = {
         hostname: "*.supabase.co",
         pathname: "/storage/v1/object/public/**",
       },
+      {
+        protocol: "https",
+        hostname: "cdn.cnnindonesia.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "akcdn.detik.net.id",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "asset.kompas.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "media.suara.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "img.antaranews.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "picsum.photos",
+        pathname: "/**",
+      },
     ],
   },
   async headers() {
