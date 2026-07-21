@@ -48,60 +48,62 @@ export async function getArticles(options: GetArticlesOptions = {}): Promise<Art
     return result;
   }
 
-  try {
-    const supabase = await createClient();
-    let query = supabase
-      .from('articles')
-      .select('*, categories!inner(name, slug)');
+    try {
+      const supabase = await createClient();
+      let query = supabase
+        .from('articles')
+        .select('*, categories!inner(name, slug)');
 
-    if (options.categorySlug) {
-      query = query.eq('categories.slug', options.categorySlug);
-    } else if (options.categoryId) {
-      query = query.eq('category_id', options.categoryId);
-    }
+      if (options.categorySlug) {
+        query = query.eq('categories.slug', options.categorySlug);
+      } else if (options.categoryId) {
+        query = query.eq('category_id', options.categoryId);
+      }
 
-    if (options.search) {
-      query = query.or(`title.ilike.%${options.search}%,content.ilike.%${options.search}%`);
-    }
+      if (options.search) {
+        query = query.or(`title.ilike.%${options.search}%,content.ilike.%${options.search}%`);
+      }
 
-    query = query.order('published_at', { ascending: false });
+      query = query.eq('status', 'published');
 
-    if (options.limit) {
-      query = query.limit(options.limit);
-    }
+      query = query.order('published_at', { ascending: false });
 
-    if (options.offset !== undefined) {
-      query = query.range(options.offset, options.offset + (options.limit ?? 10) - 1);
-    }
+      if (options.limit) {
+        query = query.limit(options.limit);
+      }
 
-    const { data, error } = await query;
+      if (options.offset !== undefined) {
+        query = query.range(options.offset, options.offset + (options.limit ?? 10) - 1);
+      }
 
-    if (error) {
-      console.warn('Error fetching articles, falling back to mock data:', error.message || error);
+      const { data, error } = await query;
+
+      if (error) {
+        console.warn('Error fetching articles, falling back to mock data:', error.message || error);
+        return getArticlesFallback(options);
+      }
+
+      return (data || []).map((art: any) => ({
+        id: art.id,
+        title: art.title,
+        slug: art.slug,
+        excerpt: art.excerpt,
+        content: art.content,
+        image_url: art.image_url,
+        category_id: art.category_id,
+        author: art.author,
+        published_at: art.published_at,
+        view_count: art.view_count,
+        is_featured: art.is_featured,
+        is_breaking: art.is_breaking,
+        reading_time_minutes: art.reading_time_minutes,
+        created_at: art.created_at,
+        category_name: art.categories?.name || 'Uncategorized',
+      }));
+    } catch (err: any) {
+      console.warn('Error fetching articles, falling back to mock data:', err.message || err);
       return getArticlesFallback(options);
     }
-
-    return (data || []).map((art: any) => ({
-      id: art.id,
-      title: art.title,
-      slug: art.slug,
-      excerpt: art.excerpt,
-      content: art.content,
-      image_url: art.image_url,
-      category_id: art.category_id,
-      author: art.author,
-      published_at: art.published_at,
-      view_count: art.view_count,
-      is_featured: art.is_featured,
-      is_breaking: art.is_breaking,
-      reading_time_minutes: art.reading_time_minutes,
-      created_at: art.created_at,
-      category_name: art.categories?.name || 'Uncategorized',
-    }));
-  } catch (err: any) {
-    console.warn('Error fetching articles, falling back to mock data:', err.message || err);
-    return getArticlesFallback(options);
-  }
 }
 
 // Fallback helper for getArticles
@@ -155,6 +157,7 @@ export async function getFeaturedArticles(): Promise<Article[]> {
       .from('articles')
       .select('*, categories(name)')
       .eq('is_featured', true)
+      .eq('status', 'published')
       .order('published_at', { ascending: false })
       .limit(3);
 
@@ -219,6 +222,7 @@ export async function getArticle(id: number): Promise<Article | null> {
       is_breaking: data.is_breaking,
       reading_time_minutes: data.reading_time_minutes,
       created_at: data.created_at,
+      status: data.status || 'published',
       category_name: data.categories?.name || 'Uncategorized',
       category_slug: data.categories?.slug || undefined,
     };
@@ -246,6 +250,7 @@ export async function getTopArticlesByCategory(): Promise<Map<string, Article>> 
     const { data, error } = await supabase
       .from('articles')
       .select('*, categories!inner(name, slug)')
+      .eq('status', 'published')
       .order('published_at', { ascending: false });
 
     if (error) {
@@ -304,6 +309,7 @@ export async function getRelatedArticles(id: number): Promise<Article[]> {
       .select('*, categories(name)')
       .eq('category_id', article.category_id)
       .neq('id', id)
+      .eq('status', 'published')
       .order('published_at', { ascending: false })
       .limit(3);
 
@@ -352,6 +358,7 @@ export async function getTrendingArticles(options: { limit?: number; offset?: nu
     const { data, error } = await supabase
       .from('articles')
       .select('*, categories(name)')
+      .eq('status', 'published')
       .order('view_count', { ascending: false })
       .order('published_at', { ascending: false })
       .range(offset, offset + limit - 1);
@@ -393,7 +400,8 @@ export async function countTrendingArticles(): Promise<number> {
     const supabase = await createClient();
     const { count, error } = await supabase
       .from('articles')
-      .select('*', { count: 'exact', head: true });
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'published');
 
     if (error) {
       console.warn('Error counting trending articles:', error.message || error);
@@ -526,6 +534,8 @@ export async function countArticles(options: CountArticlesOptions = {}): Promise
       query = query.eq('category_id', options.categoryId);
     }
 
+    query = query.eq('status', 'published');
+
     if (options.search) {
       query = query.or(`title.ilike.%${options.search}%,content.ilike.%${options.search}%`);
     }
@@ -562,7 +572,8 @@ export async function getStatsSummary(): Promise<StatsSummary> {
     
     const { count: totalArticles } = await supabase
       .from('articles')
-      .select('*', { count: 'exact', head: true });
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'published');
 
     const { count: totalCategories } = await supabase
       .from('categories')
@@ -570,7 +581,8 @@ export async function getStatsSummary(): Promise<StatsSummary> {
 
     const { data: viewsData } = await supabase
       .from('articles')
-      .select('view_count');
+      .select('view_count')
+      .eq('status', 'published');
     
     const totalViews = (viewsData || []).reduce((sum, item) => sum + (item.view_count || 0), 0);
 
@@ -580,6 +592,7 @@ export async function getStatsSummary(): Promise<StatsSummary> {
     const { count: todayArticles } = await supabase
       .from('articles')
       .select('*', { count: 'exact', head: true })
+      .eq('status', 'published')
       .gte('published_at', oneDayAgo.toISOString());
 
     return {

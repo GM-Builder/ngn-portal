@@ -39,7 +39,9 @@ async function trySupabasePublish(body: any) {
 
   if (existing) throw new Error(`Slug '${slug}' sudah dipakai`);
 
-  const article = {
+  const isPublished = status === 'published';
+
+  const article: any = {
     title,
     slug,
     content,
@@ -50,8 +52,12 @@ async function trySupabasePublish(body: any) {
     is_featured,
     is_breaking,
     reading_time_minutes: estimateReadTime(content),
-    published_at: new Date().toISOString(),
+    status: isPublished ? 'published' : 'draft',
   };
+
+  if (isPublished) {
+    article.published_at = new Date().toISOString();
+  }
 
   const { data, error } = await supabase.from("articles").insert(article).select().single();
   if (error) throw new Error(`Supabase insert error: ${error.message}`);
@@ -73,7 +79,7 @@ export async function POST(req: NextRequest) {
     content,
     category_slug,
     author = "NGN Editorial",
-    status = "published",
+    status = "draft",
   } = body;
 
   const missing = ["title", "content", "category_slug"].filter((k) => !body[k]);
@@ -102,7 +108,10 @@ export async function POST(req: NextRequest) {
     ok: true,
     id: result.id,
     slug: result.slug,
-    status: status,
-    url: `${process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000")}/article/${result.id}/${result.slug}`,
+    status: result.status || status,
+    url: result.status === 'published'
+      ? `${process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000")}/article/${result.id}/${result.slug}`
+      : null,
+    draft_url: `/admin/articles/edit/${result.id}`,
   });
 }

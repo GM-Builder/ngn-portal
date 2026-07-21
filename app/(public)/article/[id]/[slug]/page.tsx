@@ -76,6 +76,11 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     notFound();
   }
 
+  // Draft articles tidak boleh diakses publik
+  if (article.status === 'draft') {
+    notFound();
+  }
+
   const relatedArticles = await getRelatedArticles(articleId);
 
   // Sanitize article HTML server-side before rendering to prevent XSS

@@ -46,19 +46,20 @@ export const MOCK_CATEGORIES: Category[] = [
 export const MOCK_ARTICLES: Article[] = [
   {
     id: 1,
-    title: 'Pembangunan IKN Nusantara Tahap 2 Resmi Dimulai, Fokus Pusat Olahraga dan Hunian',
-    slug: 'pembangunan-ikn-nusantara-tahap-2-resmi-dimulai-fokus-pusat-olahraga-dan-hunian',
-    excerpt: 'Pemerintah resmi memulai proyek pembangunan Ibu Kota Nusantara (IKN) tahap kedua dengan alokasi anggaran Rp25 Triliun yang berfokus pada infrastruktur publik dan hunian ASN.',
-    content: '<p><strong>Nusantara, NGN Portal</strong> — Kementerian Pekerjaan Umum dan Perumahan Rakyat (PUPR) secara resmi mengumumkan dimulainya pembangunan Ibu Kota Nusantara (IKN) Tahap 2.</p><p>Fase kedua ini akan sangat berfokus pada pembangunan kompleks olahraga terpadu (sports center), gedung-gedung perkantoran baru, serta hunian berkelanjutan untuk para Aparatur Sipil Negara (ASN) yang akan mulai dipindahkan secara masif akhir tahun ini.</p><p>Menteri PUPR menjelaskan bahwa pembangunan ini ditargetkan rampung pada awal tahun 2027 dengan melibatkan lebih dari 50 kontraktor lokal dan internasional yang berkomitmen menjaga lingkungan hidup sekitar IKN.</p><p>Pusat olahraga yang akan dibangun memiliki fasilitas berstandar Olimpiade, mencakup stadion utama berkapasitas 50.000 penonton, arena akuatik, hingga jalur khusus atletik dan bersepeda.</p><p>Langkah ini diharapkan tidak hanya menjadikan IKN sebagai pusat pemerintahan saja, melainkan juga pusat peradaban baru Indonesia yang aktif, sehat, dan ramah lingkungan.</p>',
-    image_url: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&q=80&w=1200',
+    title: 'Pemerintah Resmikan Ibu Kota Nusantara Tahap Kedua, 20 Ribu ASN Siap Pindah',
+    slug: 'pemerintah-resmikan-ibu-kota-nusantara-tahap-kedua-20-ribu-asn-siap-pindah',
+    excerpt: 'Presiden meresmikan fase kedua pembangunan IKN yang mencakup pusat pemerintahan, sementara puluhan ribu aparatur sipil negara bersiap melakukan relokasi.',
+    content: '<p><strong>Jakarta, NGN Portal</strong> — Pemerintah hari ini resmi memulai tahap kedua pembangunan Ibu Kota Nusantara (IKN) di Kalimantan Timur. Fase ini mencakup pembangunan pusat pemerintahan, perumahan menteri, dan berbagai fasilitas publik pendukung.</p><p>Sebanyak 20.000 Aparatur Sipil Negara (ASN) telah menyatakan kesiapannya untuk pindah ke IKN pada gelombang pertama relokasi. Menteri Pendayagunaan Aparatur Negara dan Reformasi Birokrasi menegaskan bahwa seluruh fasilitas penunjang, termasuk perumahan dan sekolah, telah siap digunakan.</p><p>Pembangunan tahap kedua ini menandai babak baru dalam sejarah perpindahan ibu kota negara Indonesia.</p>',
+    image_url: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80&w=800',
     category_id: 1,
-    author: 'Andi Wijaya',
-    published_at: new Date().toISOString(),
-    view_count: 1250,
+    author: 'Ahmad Faizal',
+    published_at: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
+    view_count: 1500,
     is_featured: true,
     is_breaking: false,
     reading_time_minutes: 3,
     created_at: new Date().toISOString(),
+    status: 'published',
     category_name: 'Politik',
   },
   {
@@ -76,6 +77,7 @@ export const MOCK_ARTICLES: Article[] = [
     is_breaking: false,
     reading_time_minutes: 2,
     created_at: new Date().toISOString(),
+    status: 'published',
     category_name: 'Bisnis',
   },
   {
@@ -93,6 +95,7 @@ export const MOCK_ARTICLES: Article[] = [
     is_breaking: true,
     reading_time_minutes: 3,
     created_at: new Date().toISOString(),
+    status: 'published',
     category_name: 'Teknologi',
   },
   {
@@ -110,6 +113,7 @@ export const MOCK_ARTICLES: Article[] = [
     is_breaking: false,
     reading_time_minutes: 2,
     created_at: new Date().toISOString(),
+    status: 'published',
     category_name: 'Hiburan',
   },
   {
@@ -127,6 +131,7 @@ export const MOCK_ARTICLES: Article[] = [
     is_breaking: false,
     reading_time_minutes: 2,
     created_at: new Date().toISOString(),
+    status: 'published',
     category_name: 'Olahraga',
   },
   {
@@ -144,6 +149,7 @@ export const MOCK_ARTICLES: Article[] = [
     is_breaking: false,
     reading_time_minutes: 2,
     created_at: new Date().toISOString(),
+    status: 'published',
     category_name: 'Bisnis',
   },
   {
@@ -161,6 +167,7 @@ export const MOCK_ARTICLES: Article[] = [
     is_breaking: false,
     reading_time_minutes: 2,
     created_at: new Date().toISOString(),
+    status: 'published',
     category_name: 'Teknologi',
   },
   {
@@ -178,6 +185,7 @@ export const MOCK_ARTICLES: Article[] = [
     is_breaking: false,
     reading_time_minutes: 2,
     created_at: new Date().toISOString(),
+    status: 'published',
     category_name: 'Hiburan',
   },
   {
@@ -195,6 +203,7 @@ export const MOCK_ARTICLES: Article[] = [
     is_breaking: false,
     reading_time_minutes: 2,
     created_at: new Date().toISOString(),
+    status: 'published',
     category_name: 'Olahraga',
   },
   {
@@ -212,6 +221,7 @@ export const MOCK_ARTICLES: Article[] = [
     is_breaking: false,
     reading_time_minutes: 2,
     created_at: new Date().toISOString(),
+    status: 'published',
     category_name: 'Politik',
   },
 ];

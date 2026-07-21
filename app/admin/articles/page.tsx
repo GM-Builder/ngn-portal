@@ -52,6 +52,7 @@ export default function ArticlesAdminListPage() {
           is_breaking: art.is_breaking,
           reading_time_minutes: art.reading_time_minutes,
           created_at: art.created_at,
+          status: art.status || 'published',
           category_name: art.categories?.name || 'Uncategorized',
         }))
       );
@@ -67,6 +68,26 @@ export default function ArticlesAdminListPage() {
     fetchArticles();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handlePublish = async (id: number) => {
+    const article = articles.find((a) => a.id === id);
+    if (!article) return;
+
+    if (!confirm(`Publikasikan artikel "${article.title}"?`)) return;
+
+    try {
+      const supabase = createClient();
+      const { error } = await supabase
+        .from('articles')
+        .update({ status: 'published', published_at: new Date().toISOString() })
+        .eq('id', id);
+      if (error) throw error;
+      setArticles((prev) => prev.map((art) => art.id === id ? { ...art, status: 'published' as const } : art));
+    } catch (err: any) {
+      console.error(err);
+      setError('Gagal mempublikasikan artikel.');
+    }
+  };
 
   const handleDelete = async (id: number) => {
     const article = articles.find((a) => a.id === id);
@@ -265,6 +286,15 @@ export default function ArticlesAdminListPage() {
                       </span>
                     </td>
                     <td className="py-3 px-4 space-x-1 whitespace-nowrap">
+                      {art.status === 'draft' ? (
+                        <span className="inline-flex items-center gap-0.5 bg-orange-100 text-orange-800 dark:bg-orange-950/30 dark:text-orange-400 text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5" title="Draft">
+                          Draft
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-0.5 bg-green-100 text-green-800 dark:bg-green-950/30 dark:text-green-400 text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5" title="Published">
+                          Published
+                        </span>
+                      )}
                       {art.is_featured && (
                         <span className="inline-flex items-center gap-0.5 bg-yellow-100 text-yellow-800 dark:bg-yellow-950/30 dark:text-yellow-400 text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5" title="Featured Headline">
                           <Star className="w-2.5 h-2.5 fill-current" />
@@ -277,11 +307,6 @@ export default function ArticlesAdminListPage() {
                           Breaking
                         </span>
                       )}
-                      {!art.is_featured && !art.is_breaking && (
-                        <span className="text-muted-foreground/65 text-[10px] font-medium">
-                          Standar
-                        </span>
-                      )}
                     </td>
                     <td className="py-3 px-4 text-xs text-muted-foreground whitespace-nowrap">
                       {new Date(art.published_at).toLocaleDateString('id-ID', {
@@ -291,6 +316,15 @@ export default function ArticlesAdminListPage() {
                       })}
                     </td>
                     <td className="py-3 px-4 text-right space-x-1.5 whitespace-nowrap">
+                      {art.status === 'draft' && (
+                        <button
+                          onClick={() => handlePublish(art.id)}
+                          className="inline-block p-1.5 hover:bg-green-100 dark:hover:bg-green-950/30 text-green-600 transition-colors cursor-pointer"
+                          title="Publish"
+                        >
+                          <Zap className="w-4 h-4" />
+                        </button>
+                      )}
                       <Link
                         href={`/admin/articles/edit/${art.id}`}
                         className="inline-block p-1.5 hover:bg-primary/10 text-primary transition-colors cursor-pointer"

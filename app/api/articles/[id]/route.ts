@@ -107,7 +107,7 @@ export async function PUT(
   }
 
   const body = await req.json();
-  const { title, content, excerpt, category_slug, author, image_url, is_featured, is_breaking, reading_time_minutes } = body;
+  const { title, content, excerpt, category_slug, author, image_url, is_featured, is_breaking, reading_time_minutes, status } = body;
 
   try {
     const supabase = createAdminClient();
@@ -115,7 +115,7 @@ export async function PUT(
     // Check if article exists
     const { data: existing, error: fetchError } = await supabase
       .from("articles")
-      .select("id, title, slug")
+      .select("id, title, slug, status")
       .eq("id", articleId)
       .single();
 
@@ -142,6 +142,12 @@ export async function PUT(
     if (is_featured !== undefined) updateData.is_featured = is_featured;
     if (is_breaking !== undefined) updateData.is_breaking = is_breaking;
     if (reading_time_minutes !== undefined) updateData.reading_time_minutes = reading_time_minutes;
+    if (status !== undefined) {
+      updateData.status = status;
+      if (status === 'published' && existing.status !== 'published') {
+        updateData.published_at = new Date().toISOString();
+      }
+    }
 
     // Handle category_slug -> category_id
     if (category_slug !== undefined) {
@@ -188,7 +194,11 @@ export async function PUT(
       message: `Artikel '${data.title}' berhasil diupdate`,
       id: data.id,
       slug: data.slug,
-      url: `${process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000")}/article/${data.id}/${data.slug}`,
+      status: data.status,
+      url: data.status === 'published'
+        ? `${process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000")}/article/${data.id}/${data.slug}`
+        : null,
+      draft_url: `/admin/articles/edit/${data.id}`,
     });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });

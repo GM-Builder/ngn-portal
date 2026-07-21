@@ -7,6 +7,8 @@ export interface Category {
   articleCount?: number; // computed
 }
 
+export type ArticleStatus = 'draft' | 'published';
+
 export interface Article {
   id: number;
   title: string;
@@ -22,6 +24,7 @@ export interface Article {
   is_breaking: boolean;
   reading_time_minutes: number;
   created_at: string;
+  status: ArticleStatus;
   category_name?: string; // from join
   category_slug?: string; // from join
 }
