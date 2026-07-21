@@ -98,6 +98,7 @@ export async function getArticles(options: GetArticlesOptions = {}): Promise<Art
         is_breaking: art.is_breaking,
         reading_time_minutes: art.reading_time_minutes,
         created_at: art.created_at,
+        status: art.status || 'published',
         category_name: art.categories?.name || 'Uncategorized',
       }));
     } catch (err: any) {
@@ -181,6 +182,7 @@ export async function getFeaturedArticles(): Promise<Article[]> {
       is_breaking: art.is_breaking,
       reading_time_minutes: art.reading_time_minutes,
       created_at: art.created_at,
+      status: art.status || 'published',
       category_name: art.categories?.name || 'Uncategorized',
     }));
   } catch (err: any) {
@@ -278,6 +280,7 @@ export async function getTopArticlesByCategory(): Promise<Map<string, Article>> 
           is_breaking: art.is_breaking,
           reading_time_minutes: art.reading_time_minutes,
           created_at: art.created_at,
+          status: art.status || 'published',
           category_name: art.categories?.name || 'Uncategorized',
         });
       }
@@ -335,6 +338,7 @@ export async function getRelatedArticles(id: number): Promise<Article[]> {
       is_breaking: art.is_breaking,
       reading_time_minutes: art.reading_time_minutes,
       created_at: art.created_at,
+      status: art.status || 'published',
       category_name: art.categories?.name || 'Uncategorized',
     }));
   } catch (err: any) {
@@ -383,6 +387,7 @@ export async function getTrendingArticles(options: { limit?: number; offset?: nu
       is_breaking: art.is_breaking,
       reading_time_minutes: art.reading_time_minutes,
       created_at: art.created_at,
+      status: art.status || 'published',
       category_name: art.categories?.name || 'Uncategorized',
     }));
   } catch (err: any) {
