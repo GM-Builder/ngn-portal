@@ -22,6 +22,7 @@ export default function ArticlesAdminListPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'draft' | 'published'>('all');
 
   // Fetch articles — supabase client created inside the callback, not at render level
   const fetchArticles = async () => {
@@ -113,9 +114,10 @@ export default function ArticlesAdminListPage() {
   // Filter articles on client
   const filteredArticles = articles.filter(
     (art) =>
-      art.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (statusFilter === 'all' || art.status === statusFilter) &&
+      (art.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       art.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      art.category_name?.toLowerCase().includes(searchQuery.toLowerCase())
+      art.category_name?.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
   return (
@@ -159,6 +161,39 @@ export default function ArticlesAdminListPage() {
             placeholder="Cari berdasarkan judul, penulis, atau kategori..."
             className="w-full pl-10 pr-4 py-2 bg-secondary/30 border border-border text-sm focus:outline-none focus:border-primary transition-colors"
           />
+        </div>
+        {/* Status Filter */}
+        <div className="flex gap-1.5">
+          <button
+            onClick={() => setStatusFilter('all')}
+            className={`px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider border transition-colors ${
+              statusFilter === 'all'
+                ? 'bg-primary text-primary-foreground border-primary'
+                : 'bg-secondary/30 border-border text-muted-foreground hover:bg-secondary'
+            }`}
+          >
+            Semua
+          </button>
+          <button
+            onClick={() => setStatusFilter('draft')}
+            className={`px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider border transition-colors ${
+              statusFilter === 'draft'
+                ? 'bg-yellow-500 text-white border-yellow-500'
+                : 'bg-secondary/30 border-border text-muted-foreground hover:bg-secondary'
+            }`}
+          >
+            Draft
+          </button>
+          <button
+            onClick={() => setStatusFilter('published')}
+            className={`px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider border transition-colors ${
+              statusFilter === 'published'
+                ? 'bg-green-600 text-white border-green-600'
+                : 'bg-secondary/30 border-border text-muted-foreground hover:bg-secondary'
+            }`}
+          >
+            Published
+          </button>
         </div>
         <div className="text-xs text-muted-foreground font-semibold ml-auto">
           Menampilkan {filteredArticles.length} dari {articles.length} artikel

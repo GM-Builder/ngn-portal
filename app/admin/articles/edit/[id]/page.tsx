@@ -32,6 +32,7 @@ export default function EditArticlePage() {
   const [isFeatured, setIsFeatured] = useState(false);
   const [isBreaking, setIsBreaking] = useState(false);
   const [readingTime, setReadingTime] = useState(1);
+  const [status, setStatus] = useState<'draft' | 'published'>('draft');
 
   // Uploading states
   const [uploading, setUploading] = useState(false);
@@ -76,6 +77,7 @@ export default function EditArticlePage() {
           setIsFeatured(artData.is_featured);
           setIsBreaking(artData.is_breaking);
           setReadingTime(artData.reading_time_minutes);
+          setStatus(artData.status || 'draft');
         }
       } catch (err: any) {
         console.error(err);
@@ -145,7 +147,7 @@ export default function EditArticlePage() {
 
     try {
       const supabase = createClient();
-      const payload = {
+      const payload: any = {
         title,
         slug: slug || slugify(title) + '-' + Date.now(),
         category_id: Number(categoryId),
@@ -156,7 +158,12 @@ export default function EditArticlePage() {
         is_featured: isFeatured,
         is_breaking: isBreaking,
         reading_time_minutes: readingTime,
+        status,
       };
+
+      if (status === 'published') {
+        payload.published_at = new Date().toISOString();
+      }
 
       const { error } = await supabase
         .from('articles')
@@ -387,6 +394,42 @@ export default function EditArticlePage() {
               Tipe Publikasi
             </h3>
 
+            {/* Status Selector */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                Status Artikel
+              </label>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setStatus('draft')}
+                  className={`flex-1 py-2 px-3 text-xs font-bold uppercase tracking-wider border transition-colors ${
+                    status === 'draft'
+                      ? 'bg-yellow-500/20 border-yellow-500 text-yellow-600'
+                      : 'bg-secondary/30 border-border text-muted-foreground hover:bg-secondary'
+                  }`}
+                  disabled={saving}
+                >
+                  Draft
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStatus('published')}
+                  className={`flex-1 py-2 px-3 text-xs font-bold uppercase tracking-wider border transition-colors ${
+                    status === 'published'
+                      ? 'bg-green-500/20 border-green-500 text-green-600'
+                      : 'bg-secondary/30 border-border text-muted-foreground hover:bg-secondary'
+                  }`}
+                  disabled={saving}
+                >
+                  Publish
+                </button>
+              </div>
+              <p className="text-[10px] text-muted-foreground/80 font-semibold">
+                {status === 'draft' ? 'Artikel hanya terlihat di admin, belum tampil di halaman depan.' : 'Artikel akan langsung tampil di halaman depan.'}
+              </p>
+            </div>
+
             <div className="space-y-3">
               <label className="flex items-start gap-2.5 cursor-pointer">
                 <input
@@ -431,7 +474,7 @@ export default function EditArticlePage() {
               disabled={saving || uploading}
             >
               <Save className="w-4 h-4" />
-              {saving ? 'Menyimpan...' : 'Simpan Artikel'}
+              {saving ? 'Menyimpan...' : status === 'draft' ? 'Simpan Draft' : 'Terbitkan Artikel'}
             </button>
           </div>
         </div>
