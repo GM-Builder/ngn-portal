@@ -20,6 +20,7 @@ export function MonetagInPagePush() {
     const script = document.createElement('script');
     script.dataset.zone = '11353078';
     script.src = MONETAG_INPAGE_PUSH;
+    script.async = true;
     document.body.appendChild(script);
   }, []);
 
@@ -37,7 +38,21 @@ export function MonetagVignette() {
     const script = document.createElement('script');
     script.dataset.zone = '11353090';
     script.src = MONETAG_VIGNETTE;
+    script.async = true;
     document.body.appendChild(script);
+  }, []);
+
+  return null;
+}
+
+// ─── Monetag Service Worker Registration ────────────────────────────────────
+export function MonetagSW() {
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(() => console.log('[Monetag] SW registered'))
+        .catch((err) => console.warn('[Monetag] SW registration failed:', err));
+    }
   }, []);
 
   return null;
@@ -126,39 +141,37 @@ const ADSTERRA_SOCIAL_BAR = `https://pl30448492.effectivecpmnetwork.com/5c/2d/46
 // ─── Adsterra iframe renderer ───────────────────────────────────────────────
 function AdsterraAd({ variant, className }: { variant: string; className?: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [iframeSrc, setIframeSrc] = useState<string | null>(null);
+  const loadedRef = useRef(false);
 
   useEffect(() => {
-    // Extract the invoke.js URL from the script
-    const script = ADSTERRA_SCRIPTS[variant];
-    if (!script) return;
+    if (!containerRef.current || loadedRef.current) return;
+    loadedRef.current = true;
 
-    const match = script.match(/src="(https:\/\/[^"]+invoke\.js)"/);
-    if (match) {
-      // The iframe approach: create iframe with the ad service URL
-      const key = script.match(/'key'\s*:\s*'([^']+)'/)?.[1];
-      if (key) {
-        setIframeSrc(`https://www.highperformanceformat.com/${key}/invoke.js`);
-      }
-    }
-  }, [variant]);
+    const raw = ADSTERRA_SCRIPTS[variant];
+    if (!raw) return;
 
-  // Load script dynamically
-  useEffect(() => {
-    if (!containerRef.current) return;
-    const script = ADSTERRA_SCRIPTS[variant];
-    if (!script) return;
+    // Ekstrak key, format, height, width dari konfigurasi
+    const key = raw.match(/'key'\s*:\s*'([^']+)'/)?.[1];
+    const fmt = raw.match(/'format'\s*:\s*'([^']+)'/)?.[1] || 'iframe';
+    const h = raw.match(/'height'\s*:\s*(\d+)/)?.[1];
+    const w = raw.match(/'width'\s*:\s*(\d+)/)?.[1];
 
-    // Clear previous content
-    containerRef.current.innerHTML = '';
+    if (!key) return;
 
-    // Create and append the script
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = script;
-    
-    while (tempDiv.firstChild) {
-      containerRef.current.appendChild(tempDiv.firstChild);
-    }
+    // Set global atOptions
+    (window as any).atOptions = {
+      key,
+      format: fmt,
+      ...(h ? { height: Number(h) } : {}),
+      ...(w ? { width: Number(w) } : {}),
+      params: {},
+    };
+
+    // Buat script element untuk invoke.js (bukan innerHTML)
+    const script = document.createElement('script');
+    script.src = `https://www.highperformanceformat.com/${key}/invoke.js`;
+    script.async = true;
+    containerRef.current.appendChild(script);
   }, [variant]);
 
   return <div ref={containerRef} className={className} />;
