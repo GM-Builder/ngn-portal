@@ -55,6 +55,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const { data, error } = await supabase
       .from('articles')
       .select('id, title, slug, published_at')
+      .eq('status', 'published')
       .not('published_at', 'is', null)
       .order('published_at', { ascending: false });
 

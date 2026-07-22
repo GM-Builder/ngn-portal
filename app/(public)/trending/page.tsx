@@ -21,6 +21,19 @@ export const metadata: Metadata = {
   title: 'Berita Trending | NGN',
   description: 'Daftar berita dengan pembaca terbanyak dan interaksi tertinggi di NGN.',
   alternates: { canonical: `${BASE_URL}/trending` },
+  openGraph: {
+    title: 'Berita Trending | NGN',
+    description: 'Daftar berita dengan pembaca terbanyak dan interaksi tertinggi di NGN.',
+    url: `${BASE_URL}/trending`,
+    siteName: 'NGN - Nice Good News',
+    locale: 'id_ID',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Berita Trending | NGN',
+    description: 'Daftar berita dengan pembaca terbanyak dan interaksi tertinggi di NGN.',
+  },
 };
 
 export default async function TrendingPage({ searchParams }: TrendingPageProps) {

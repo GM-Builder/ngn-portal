@@ -36,6 +36,19 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
     title: `Berita ${category.name} | NGN`,
     description,
     alternates: { canonical: `${BASE_URL}/category/${slug}` },
+    openGraph: {
+      title: `Berita ${category.name} | NGN`,
+      description,
+      url: `${BASE_URL}/category/${slug}`,
+      siteName: 'NGN - Nice Good News',
+      locale: 'id_ID',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `Berita ${category.name} | NGN`,
+      description,
+    },
   };
 }
 

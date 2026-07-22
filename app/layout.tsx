@@ -17,10 +17,35 @@ const urbanist = Urbanist({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ngn.id'),
-  title: 'NGN - Nice Good News',
+  title: {
+    default: 'NGN - Nice Good News | Portal Berita Indonesia',
+    template: '%s | NGN',
+  },
   description: 'Portal Media Visual Modern Indonesia. Cepat, Informatif, Clean, dan Profesional.',
   icons: {
     icon: '/logos/NGN ICON .png',
+  },
+  openGraph: {
+    siteName: 'NGN - Nice Good News',
+    type: 'website',
+    locale: 'id_ID',
+  },
+  twitter: {
+    card: 'summary_large_image',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    google: 'X0MBqL0pm-6gOtUMQKzqSm7P0OsAGbjQGX4Ub6_BE1o',
   },
 };
 
@@ -49,6 +74,23 @@ export default function RootLayout({
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var t=localStorage.getItem('ngn-theme');if(t==='dark'){document.documentElement.classList.add('dark');}}catch(e){}})();`,
+          }}
+        />
+
+        {/* JSON-LD Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'NewsMediaOrganization',
+              name: 'NGN - Nice Good News',
+              url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ngn.id',
+              description: 'Portal Media Visual Modern Indonesia. Cepat, Informatif, Clean, dan Profesional.',
+              foundingDate: '2025',
+              address: { '@type': 'PostalAddress', addressCountry: 'ID' },
+              sameAs: [],
+            }),
           }}
         />
 
