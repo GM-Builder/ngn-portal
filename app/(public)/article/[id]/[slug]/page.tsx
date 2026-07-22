@@ -187,15 +187,22 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
           {/* Featured Image */}
           {article.image_url && (
-            <div className="relative aspect-video w-full overflow-hidden bg-secondary border border-border">
-              <Image
-                src={article.image_url}
-                alt={article.title}
-                fill
-                className="object-cover"
-                priority
-                sizes="(max-width: 1024px) 100vw, 800px"
-              />
+            <div>
+              <div className="relative aspect-video w-full overflow-hidden bg-secondary border border-border">
+                <Image
+                  src={article.image_url}
+                  alt={article.title}
+                  fill
+                  className="object-cover"
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 800px"
+                />
+              </div>
+              {article.image_caption && (
+                <p className="text-[11px] text-muted-foreground/70 font-medium mt-1.5 italic leading-relaxed px-1">
+                  {article.image_caption}
+                </p>
+              )}
             </div>
           )}
 

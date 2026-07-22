@@ -27,6 +27,7 @@ export default function EditArticlePage() {
   const [categoryId, setCategoryId] = useState('');
   const [author, setAuthor] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [imageCaption, setImageCaption] = useState('');
   const [excerpt, setExcerpt] = useState('');
   const [content, setContent] = useState('');
   const [isFeatured, setIsFeatured] = useState(false);
@@ -72,6 +73,7 @@ export default function EditArticlePage() {
           setCategoryId(String(artData.category_id));
           setAuthor(artData.author);
           setImageUrl(artData.image_url || '');
+          setImageCaption(artData.image_caption || '');
           setExcerpt(artData.excerpt || '');
           setContent(artData.content);
           setIsFeatured(artData.is_featured);
@@ -153,6 +155,7 @@ export default function EditArticlePage() {
         category_id: Number(categoryId),
         author: author || 'Redaksi NGN',
         image_url: imageUrl || null,
+        image_caption: imageCaption || null,
         excerpt: excerpt || null,
         content,
         is_featured: isFeatured,
@@ -383,6 +386,21 @@ export default function EditArticlePage() {
                 onChange={(e) => setImageUrl(e.target.value)}
                 placeholder="https://images.unsplash.com/..."
                 className="w-full px-3 py-1.5 bg-secondary/30 border border-border font-mono text-xs focus:outline-none focus:border-primary transition-colors"
+                disabled={saving}
+              />
+            </div>
+
+            {/* Image Caption */}
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                Keterangan Foto (Caption)
+              </label>
+              <input
+                type="text"
+                value={imageCaption}
+                onChange={(e) => setImageCaption(e.target.value)}
+                placeholder="Contoh: Ilustrasi suasana gedung KPK. (Foto: Dok. KPK)"
+                className="w-full px-3 py-1.5 bg-secondary/30 border border-border text-xs focus:outline-none focus:border-primary transition-colors"
                 disabled={saving}
               />
             </div>

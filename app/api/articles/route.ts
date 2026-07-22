@@ -47,6 +47,7 @@ async function trySupabasePublish(body: any) {
     content,
     excerpt: excerpt ?? content.replace(/<[^>]*>/g, "").slice(0, 160),
     image_url: image_url ?? null,
+    image_caption: body.image_caption || null,
     category_id: category.id,
     author,
     is_featured,

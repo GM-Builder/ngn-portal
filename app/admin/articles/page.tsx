@@ -45,6 +45,7 @@ export default function ArticlesAdminListPage() {
           excerpt: art.excerpt,
           content: art.content,
           image_url: art.image_url,
+          image_caption: art.image_caption || null,
           category_id: art.category_id,
           author: art.author,
           published_at: art.published_at,
