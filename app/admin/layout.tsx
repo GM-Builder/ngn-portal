@@ -37,9 +37,9 @@ export default async function AdminLayout({
   };
 
   return (
-    <div className="min-h-screen flex bg-secondary/10">
+    <div className="min-h-screen bg-secondary/10">
       {/* Sidebar Navigation */}
-      <aside className="w-64 bg-primary text-primary-foreground flex flex-col border-r border-primary/20 shrink-0">
+      <aside className="fixed left-0 top-0 w-64 h-screen overflow-hidden bg-primary text-primary-foreground flex flex-col border-r border-primary/20 z-30">
         {/* Sidebar Header */}
         <div className="h-16 flex items-center px-6 border-b border-primary-foreground/10">
           <Link href="/admin" className="flex items-center gap-2">
@@ -114,6 +114,9 @@ export default async function AdminLayout({
           </form>
         </div>
       </aside>
+
+      {/* Sidebar Spacer */}
+      <div className="w-64 shrink-0" />
 
       {/* Main Content Pane */}
       <div className="flex-1 flex flex-col min-w-0">
